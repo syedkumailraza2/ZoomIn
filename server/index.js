@@ -1,6 +1,10 @@
 const { Server } = require("socket.io");
+const express = require('express')
+const app = express()
+const http = require("http");
+const server = http.createServer(app);
+const io = new Server(server, {
 
-const io = new Server(8000, {
   cors: true,
 });
 
@@ -35,4 +39,14 @@ io.on("connection", (socket) => {
     console.log("peer:nego:done", ans);
     io.to(to).emit("peer:nego:final", { from: socket.id, ans });
   });
+});
+
+// Express route to check if backend is working
+app.get("/", (req, res) => {
+  res.send("WebSocket server is running!");
+});
+
+const PORT = process.env.PORT || 8000;
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
